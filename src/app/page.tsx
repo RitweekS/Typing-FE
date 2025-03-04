@@ -1,13 +1,19 @@
-import { NEXT_AUTH } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+"use client";
+import { Button } from "@/components/ui/button";
+
+import { signOut } from "next-auth/react";
 import React from "react";
 
-const Main = async () => {
-    const session = await getServerSession(NEXT_AUTH);
+const Main = () => {
     return (
         <div>
-            Main
-            <h1>{JSON.stringify(session)}</h1>
+            <Button
+                onClick={async () => {
+                    await signOut();
+                }}
+            >
+                Signout
+            </Button>
         </div>
     );
 };
