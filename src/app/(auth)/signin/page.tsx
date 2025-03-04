@@ -1,21 +1,18 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 
-import { signOut } from "next-auth/react";
-import React from "react";
-
-const Main = () => {
+const SignIn = () => {
     return (
         <div>
             <Button
                 onClick={async () => {
-                    await signOut();
+                    await signIn("google", { callbackUrl: "/" });
                 }}
             >
-                Signout
+                Login with google
             </Button>
         </div>
     );
 };
-
-export default Main;
+export default SignIn;
