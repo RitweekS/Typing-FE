@@ -1,21 +1,9 @@
 "use client";
-import { Button } from "@/components/ui/button";
-
-import { signOut } from "next-auth/react";
+import Landing from "@/components/landing";
 import React from "react";
 
 const Main = () => {
-    return (
-        <div>
-            <Button
-                onClick={async () => {
-                    await signOut();
-                }}
-            >
-                Signout
-            </Button>
-        </div>
-    );
+    return <Landing />;
 };
 
 export default Main;

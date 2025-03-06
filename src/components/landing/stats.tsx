@@ -1,0 +1,42 @@
+import React, { useMemo } from "react";
+import { Card } from "../ui/card";
+import { ChartNoAxesColumn } from "lucide-react";
+
+const Stats = () => {
+    const list = useMemo(() => {
+        return [
+            {
+                label: "Best WPM",
+                value: "85",
+            },
+            {
+                label: "Average WPM",
+                value: "73",
+            },
+            {
+                label: "Tests Taken",
+                value: "124",
+            },
+        ];
+    }, []);
+    return (
+        <div className="row-span-2">
+            <Card className="h-full px-4">
+                <div className="flex gap-2 items-center">
+                    <ChartNoAxesColumn size={18} strokeWidth={3} />
+                    <p className="font-semibold text-base">Your Stats</p>
+                </div>
+                <div className="flex flex-col justify-between flex-1">
+                    {list.map((v, index) => (
+                        <div className="flex justify-between" key={index}>
+                            <p className="text-sm">{v.label}</p>
+                            <p className="text-sm font-bold">{v.value}</p>
+                        </div>
+                    ))}
+                </div>
+            </Card>
+        </div>
+    );
+};
+
+export default Stats;

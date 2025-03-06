@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 const AppBar = () => {
     const session = useSession();
     return (
-        <div className="w-screen flex justify-between items-center pt-2 pb-2 pr-4 pl-4 border-b">
+        <div className="w-screen flex justify-between items-center pt-2 pb-2 pr-4 pl-4 border-b fixed top-0 bg-white dark:bg-gray-900 z-50 shadow-sm">
             <div className="flex gap-2 justify-center items-center">
                 <FaKeyboard className="text-xl font-bold" />
                 <p className="text-xl font-bold">Typing Master</p>
