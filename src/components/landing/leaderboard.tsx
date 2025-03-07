@@ -1,24 +1,25 @@
 import React, { useMemo } from "react";
 import { Card } from "../ui/card";
 import { ChartSpline } from "lucide-react";
+import Image from "next/image";
 
 const Leaderboard = () => {
     const leaderboardList = useMemo(() => {
         return [
             {
-                name: "Best WPM",
+                name: "Alex M.",
                 value: "85",
-                icon: "",
+                icon: "/first.svg",
             },
             {
-                name: "Average WPM",
+                name: "Sarah K.",
                 value: "73",
-                icon: "",
+                icon: "/second.svg",
             },
             {
-                name: "Tests Taken",
+                name: "John D.",
                 value: "124",
-                icon: "",
+                icon: "/third.svg",
             },
         ];
     }, []);
@@ -31,8 +32,18 @@ const Leaderboard = () => {
                 </div>
                 <div className="flex flex-col justify-between flex-1">
                     {leaderboardList.map((v, index) => (
-                        <div className="flex justify-between" key={index}>
-                            <div>
+                        <div
+                            className="flex justify-between bg-gray-100 p-2 rounded-sm
+ dark:bg-gray-800"
+                            key={index}
+                        >
+                            <div className="flex gap-2">
+                                <Image
+                                    width={12}
+                                    height={12}
+                                    alt="position"
+                                    src={v.icon}
+                                />
                                 <p className="text-sm">{v.name}</p>
                             </div>
                             <p className="text-sm font-bold">{v.value}</p>
