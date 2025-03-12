@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Card } from "../ui/card";
 import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
@@ -8,24 +8,32 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useGetAllStats } from "@/services/queries";
 
-const chartData = [
-    { month: "January", desktop: 186 },
-    { month: "February", desktop: 305 },
-    { month: "March", desktop: 237 },
-    { month: "April", desktop: 73 },
-    { month: "May", desktop: 209 },
-    { month: "June", desktop: 214 },
-];
+// const chartData = [
+//     { WAP: 186 },
+//     { WAP: 305 },
+//     { WAP: 237 },
+//     { WAP: 73 },
+//     { WAP: 209 },
+//     { WAP: 214 },
+// ];
 
 const chartConfig = {
-    desktop: {
-        label: "Desktop",
+    WAP: {
+        label: "WAP",
         color: "hsl(var(--chart-1))",
     },
 } satisfies ChartConfig;
 
 const Progress = () => {
+    const getAllStatsQuery = useGetAllStats();
+    const chartData = useMemo(() => {
+        if (getAllStatsQuery.data?.data) {
+            return getAllStatsQuery.data.data.map((v) => ({ WAP: v.wpm }));
+        }
+        return [{ WAP: 0 }];
+    }, [getAllStatsQuery.data]);
     return (
         <div className="row-span-3 col-start-1 row-start-3 ">
             <Card className="h-full px-4">
@@ -48,18 +56,18 @@ const Progress = () => {
                         >
                             <CartesianGrid vertical={false} />
                             <XAxis
-                                dataKey="month"
+                                dataKey=" "
                                 tickLine={false}
                                 axisLine={false}
-                                tickMargin={8}
-                                tickFormatter={(value) => value.slice(0, 3)}
+                                tickMargin={2}
+                                // tickFormatter={(value) => value.slice(0, 3)}
                             />
                             <ChartTooltip
                                 cursor={false}
                                 content={<ChartTooltipContent hideLabel />}
                             />
                             <Line
-                                dataKey="desktop"
+                                dataKey="WAP"
                                 type="linear"
                                 strokeWidth={2}
                                 dot={true}

@@ -9,7 +9,7 @@ import Typing from "./typing";
 const Landing = () => {
     return (
         <div className="h-full w-full flex flex-col">
-            <div className="flex-1 pb-4 grid grid-cols-5 grid-rows-7 gap-4 ">
+            <div className="flex-1 pb-4 grid grid-cols-5 grid-rows-7 gap-4 overflow-auto">
                 <Stats />
                 <Typing />
                 <Difficulty />

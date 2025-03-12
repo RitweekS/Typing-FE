@@ -4,15 +4,11 @@ import { Clock } from "lucide-react";
 import { Button } from "../ui/button";
 import { IoIosSpeedometer } from "react-icons/io";
 import { FaRegClock, FaRegCheckCircle } from "react-icons/fa";
-import { easyLorem } from "@/lib/generateText";
-
-// *TODO : Correct typed character to green
-// *TODO : If user typed wrong, change the color to red
-// *TODO : Add underline to current typing character
-// *TODO : Restrict user from typing more than the test paragraph
-// *TODO : Restrict user from typing when time is over
-// *TODO : Calculate Accuracy, Speed, and WPM
-// *TODO : Style the component
+import { easyLorem, hardLorem, mediumLorem } from "@/lib/generateText";
+import { useGlobalStore } from "@/context/root-context";
+import { useAddTypingTestInfo } from "@/services/queries";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 const Typing = () => {
     const [testTime, setTestTime] = useState(30);
@@ -23,15 +19,16 @@ const Typing = () => {
     const [timeLeft, setTimeLeft] = useState(testTime);
     const [isRunning, setIsRunning] = useState(false);
     const [paragraph, setParagraph] = useState("");
+    const store = useGlobalStore();
 
+    const addTypingTestInfoMutation = useAddTypingTestInfo();
     useEffect(() => {
         if (isRunning && timeLeft > 0) {
             const timer = setInterval(() => {
                 setTimeLeft((prev) => prev - 1);
             }, 1000);
-            calculateWPMAndAccuracy();
             return () => clearInterval(timer);
-        } else if (timeLeft === 0) {
+        } else if (timeLeft === 0 && isRunning) {
             setIsRunning(false);
             calculateWPMAndAccuracy();
         }
@@ -52,10 +49,16 @@ const Typing = () => {
     }, [isRunning, testTime]);
 
     useEffect(() => {
-        setParagraph(easyLorem.generateParagraphs(2));
-    }, []);
+        if (store.difficulty === "Hard") {
+            setParagraph(hardLorem.generateParagraphs(1));
+        } else if (store.difficulty === "Medium") {
+            setParagraph(mediumLorem.generateParagraphs(1));
+        } else {
+            setParagraph(easyLorem.generateParagraphs(2));
+        }
+    }, [store.difficulty]);
 
-    const calculateWPMAndAccuracy = () => {
+    const calculateWPMAndAccuracy = async () => {
         const correctChars = userInput
             .split("")
             .filter((char, index) => char === paragraph[index]).length;
@@ -63,11 +66,26 @@ const Typing = () => {
 
         const wordsTyped = correctChars / 5;
         const minutes = testTime / 60;
+        const currentAccuracy =
+            totalChars > 0
+                ? Math.round((correctChars / totalChars) * 100)
+                : 100;
+        const currentWPM = Math.round(wordsTyped / minutes) || 0;
+        setWpm(currentWPM);
+        setAccuracy(currentAccuracy);
 
-        setWpm(Math.round(wordsTyped / minutes) || 0);
-        setAccuracy(
-            totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 100
-        );
+        try {
+            await addTypingTestInfoMutation.mutateAsync({
+                accuracy: currentAccuracy,
+                difficulty: store.difficulty.toLocaleLowerCase(),
+                testDuration: testTime,
+                wpm: currentWPM,
+            });
+        } catch (error) {
+            if (error) {
+                toast.error((error as AxiosError).message);
+            }
+        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,9 +103,8 @@ const Typing = () => {
 
     const renderParagraph = useCallback(() => {
         return paragraph.split("").map((c, index) => (
-            <>
+            <React.Fragment key={index}>
                 <span
-                    key={index}
                     className={`${
                         index < userInput.length
                             ? c === userInput[index]
@@ -95,27 +112,22 @@ const Typing = () => {
                                 : "text-red-400 underline"
                             : "text-gray-400"
                     } ${
-                        index === userInput.length
+                        index === userInput.length && isRunning
                             ? "border-l-2 border-yellow-400 "
                             : ""
-                    } text-2xl [word-spacing:10px] tracking-[4px] leading-[40px]`}
+                    } text-2xl [word-spacing:4px] tracking-[2px] leading-[40px]`}
                 >
                     {c}
                 </span>
-                {!isRunning && (
-                    <div className="absolute h-full w-full top-0 flex items-center justify-center rounded-sm opacity-[0.2] backdrop-blur dark:text-gray-500 text-gray-400">
-                        Press space to start the test...
-                    </div>
-                )}
-            </>
+            </React.Fragment>
         ));
-    }, [userInput, paragraph, isRunning]);
+    }, [userInput, paragraph]);
 
     return (
         <div className="col-span-3 row-span-6">
             <Card className="h-full px-4">
                 <div className="flex justify-between">
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center overflow-auto">
                         <Clock size={16} strokeWidth={3} />
                         <p className="font-semibold text-base">Test Duration</p>
                     </div>
@@ -137,8 +149,23 @@ const Typing = () => {
                         ))}
                     </div>
                 </div>
-                <div className="h-full p-4 flex-1 bg-gray-100 dark:bg-gray-800 rounded-sm flex flex-col gap-2">
-                    <div className="relative">{renderParagraph()}</div>
+                <div
+                    id="paragraph"
+                    className="p-4 flex-1 bg-gray-100 dark:bg-gray-800 rounded-sm flex flex-col gap-2 h-full overflow-auto"
+                >
+                    <p
+                        className={`text-gray-500 text-sm ${
+                            isRunning ? "invisible" : "visible"
+                        }`}
+                    >
+                        Press <span className="font-bold">Space</span> to start
+                        typing...
+                    </p>
+                    <div className="relative flex-1 overflow-auto p-2">
+                        <div className=" overflow-y-auto p-2">
+                            {renderParagraph()}
+                        </div>
+                    </div>
                     <input
                         ref={inputRef}
                         value={userInput}
@@ -147,7 +174,7 @@ const Typing = () => {
                         className="absolute opacity-0"
                     />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex  gap-2">
                     {[
                         {
                             label: "WPM",

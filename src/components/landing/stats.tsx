@@ -1,24 +1,26 @@
 import React, { useMemo } from "react";
 import { Card } from "../ui/card";
 import { ChartNoAxesColumn } from "lucide-react";
+import { useGetBestStats } from "@/services/queries";
 
 const Stats = () => {
+    const getBestStatsQuery = useGetBestStats();
     const list = useMemo(() => {
         return [
             {
                 label: "Best WPM",
-                value: "85",
+                value: getBestStatsQuery.data?.data.bestWAP ?? 0,
             },
             {
                 label: "Average WPM",
-                value: "73",
+                value: getBestStatsQuery.data?.data.averageWAP ?? 0,
             },
             {
                 label: "Tests Taken",
-                value: "124",
+                value: getBestStatsQuery.data?.data.totalTestTaken ?? 0,
             },
         ];
-    }, []);
+    }, [getBestStatsQuery.data]);
     return (
         <div className="row-span-2">
             <Card className="h-full px-4">

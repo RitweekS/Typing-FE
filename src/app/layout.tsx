@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionLayout from "@/layout/session-layout";
+import { GlobalStore } from "@/context/root-context";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -27,8 +28,11 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                suppressHydrationWarning
             >
-                <SessionLayout> {children} </SessionLayout>
+                <SessionLayout>
+                    <GlobalStore> {children} </GlobalStore>
+                </SessionLayout>
             </body>
         </html>
     );

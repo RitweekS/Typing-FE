@@ -6,6 +6,19 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
     const path = req.nextUrl.pathname;
+    const res = NextResponse.next();
+
+    if (token) {
+        res.cookies.set("next-auth-session", token.customToken as string, {
+            httpOnly: true,
+            secure: true,
+            path: "/",
+            maxAge: 60 * 60 * 24,
+            sameSite: "strict",
+        });
+    } else {
+        res.cookies.delete("next-auth-session");
+    }
 
     const isPublicPath = path === "/signin";
 
@@ -17,7 +30,7 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/signin", req.url));
     }
 
-    return NextResponse.next();
+    return res;
 }
 
 // Apply middleware to all routes

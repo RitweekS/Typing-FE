@@ -28,7 +28,7 @@ const hardLorem = new LoremIpsum({
         min: 6, // More sentences for a complex paragraph
     },
     wordsPerSentence: {
-        max: 20,
+        max: 15,
         min: 10, // Longer sentences for complexity
     },
 });

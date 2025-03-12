@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card } from "../ui/card";
 import { Gauge } from "lucide-react";
 import { Button } from "../ui/button";
+import { useGlobalStore } from "@/context/root-context";
 
+type DifficultyType = "Easy" | "Medium" | "Hard";
 const Difficulty = () => {
-    const [selectedDifficulty, setSelectedDifficulty] = useState("Easy");
-    const DifficultyList = ["Easy", "Medium", "Hard"];
+    const { difficulty, setDifficulty } = useGlobalStore();
+    const DifficultyList: DifficultyType[] = ["Easy", "Medium", "Hard"];
     return (
         <div className="row-span-2 col-start-5 ">
             <Card className="h-full px-4">
@@ -18,9 +20,9 @@ const Difficulty = () => {
                         <Button
                             variant="outline"
                             key={index}
-                            onClick={() => setSelectedDifficulty(d)}
+                            onClick={() => setDifficulty(d)}
                             className={`${
-                                selectedDifficulty === d &&
+                                difficulty === d &&
                                 " bg-gray-100 dark:bg-gray-800"
                             } border-0 shadow-none`}
                         >
