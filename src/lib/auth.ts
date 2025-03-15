@@ -8,18 +8,21 @@ async function customUserAdapter(
 ) {
     try {
         // Call your existing API endpoint to verify/create user
-        const response = await fetch(`http://localhost:8000/auth/verify`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: user.email,
-                name: user.name,
-                avatarUrl: user.image,
-                provider: account?.provider,
-            }),
-        });
+        const response = await fetch(
+            `${process.env.API_BASE_URL}/auth/verify`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: user.email,
+                    name: user.name,
+                    avatarUrl: user.image,
+                    provider: account?.provider,
+                }),
+            }
+        );
         if (!response.ok) {
             throw new Error("Failed to verify user");
         }
@@ -80,6 +83,6 @@ export const NEXT_AUTH: AuthOptions = {
         signIn: "/signin",
         // error: '/auth/error',
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: "mysecret",
     session: { strategy: "jwt" },
 };

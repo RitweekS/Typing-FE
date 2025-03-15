@@ -1,21 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
-
-import { signOut } from "next-auth/react";
-import React from "react";
+import Landing from "@/components/landing";
+import { useSession } from "next-auth/react";
 
 const Main = () => {
-    return (
-        <div>
-            <Button
-                onClick={async () => {
-                    await signOut();
-                }}
-            >
-                Signout
-            </Button>
-        </div>
-    );
+    const session = useSession();
+    console.log("session", session);
+
+    return <Landing />;
 };
 
 export default Main;

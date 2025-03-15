@@ -1,18 +1,15 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
+import { ModeToggle } from "@/components/common/theme-button";
+import SignIn from "@/components/signin";
 
-const SignIn = () => {
+const SignInPage = () => {
     return (
-        <div>
-            <Button
-                onClick={async () => {
-                    await signIn("google", { callbackUrl: "/" });
-                }}
-            >
-                Login with google
-            </Button>
+        <div className="w-full h-full flex justify-center items-center">
+            <div className="absolute top-4 right-4">
+                <ModeToggle />
+            </div>
+            <SignIn />
         </div>
     );
 };
-export default SignIn;
+export default SignInPage;
