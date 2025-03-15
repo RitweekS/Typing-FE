@@ -1,8 +1,8 @@
 import axios from "axios";
-import { BestStats, Stats, TypingTestBody } from "./type";
+import { BestStats, Leaderboard, Stats, TypingTestBody } from "./type";
 
 const AxiosInstance = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: process.env.API_BASE_URL,
     withCredentials: true,
 });
 
@@ -14,4 +14,7 @@ export const getBestStats = async () => {
 };
 export const getAllStats = async () => {
     return AxiosInstance.get<Stats[]>("/typing-tests/stats/all");
+};
+export const getLeaderBoard = async () => {
+    return AxiosInstance.get<Leaderboard[]>("/leaderboard");
 };

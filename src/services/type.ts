@@ -19,3 +19,11 @@ export interface Stats {
     difficulty: string;
     createdAt: Date;
 }
+export interface Leaderboard {
+    user: {
+        name: string;
+        email: string;
+        avatarUrl: string;
+    };
+    score: number;
+}

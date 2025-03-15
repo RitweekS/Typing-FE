@@ -2,27 +2,32 @@ import React, { useMemo } from "react";
 import { Card } from "../ui/card";
 import { ChartSpline } from "lucide-react";
 import Image from "next/image";
+import { useGetLeaderboard } from "@/services/queries";
 
 const Leaderboard = () => {
+    const getLeaderboardQuery = useGetLeaderboard();
     const leaderboardList = useMemo(() => {
-        return [
-            {
-                name: "Alex M.",
-                value: "85",
-                icon: "/first.svg",
-            },
-            {
-                name: "Sarah K.",
-                value: "73",
-                icon: "/second.svg",
-            },
-            {
-                name: "John D.",
-                value: "124",
-                icon: "/third.svg",
-            },
-        ];
-    }, []);
+        if (getLeaderboardQuery.data) {
+            return [
+                {
+                    name: getLeaderboardQuery.data.data[0].user.name,
+                    value: getLeaderboardQuery.data.data[0].score,
+                    icon: "/first.svg",
+                },
+                {
+                    name: getLeaderboardQuery.data.data[1].user.name,
+                    value: getLeaderboardQuery.data.data[1].score,
+                    icon: "/second.svg",
+                },
+                {
+                    name: getLeaderboardQuery.data.data[2].user.name,
+                    value: getLeaderboardQuery.data.data[2].score,
+                    icon: "/third.svg",
+                },
+            ];
+        }
+        return [];
+    }, [getLeaderboardQuery.data]);
     return (
         <div className="row-span-2 col-start-5 row-start-3 ">
             <Card className="h-full px-4">
