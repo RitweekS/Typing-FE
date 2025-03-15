@@ -1,13 +1,33 @@
-import { Account, AuthOptions, User } from "next-auth";
+import { Account, AuthOptions, Session, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
+import { JWT } from "next-auth/jwt";
+
+// Extend the User type
+interface CustomUser extends User {
+    id: string;
+    customToken?: string;
+}
+
+// Extend the JWT type
+interface CustomToken extends JWT {
+    id?: string;
+    customToken?: string;
+}
+
+// Extend the Session type
+declare module "next-auth" {
+    interface Session {
+        user: CustomUser;
+        customToken?: string;
+    }
+}
 
 async function customUserAdapter(
     user: User | AdapterUser,
     account: Account | null
-) {
+): Promise<CustomUser> {
     try {
-        // Call your existing API endpoint to verify/create user
         const response = await fetch(
             `${process.env.API_BASE_URL}/auth/verify`,
             {
@@ -28,6 +48,7 @@ async function customUserAdapter(
         }
 
         const data = await response.json();
+
         return {
             ...user,
             id: data.user.id,
@@ -50,39 +71,40 @@ export const NEXT_AUTH: AuthOptions = {
         async signIn({ user, account }) {
             try {
                 const customUser = await customUserAdapter(user, account);
-                // Store custom data in user object for later use in other callbacks
-                user.id = customUser.id;
-                user.customToken = customUser.customToken;
+
+                (user as CustomUser).id = customUser.id;
+                (user as CustomUser).customToken = customUser.customToken;
+
                 return true;
             } catch (error) {
                 console.error("Error during sign in:", error);
                 return false;
             }
         },
-        async redirect({ baseUrl }) {
-            return baseUrl; // Redirects to home page after sign-in
-        },
         async jwt({ token, user }) {
-            // Forward the custom token from your API to the JWT token
             if (user) {
-                token.id = user.id;
-                token.customToken = user.customToken;
+                token.id = (user as CustomUser).id;
+                token.customToken = (user as CustomUser).customToken;
             }
-            return token;
+            return token as CustomToken;
         },
-        async session({ session, token }) {
-            // Add custom token to the session that will be available on the client
+        async session({
+            session,
+            token,
+        }: {
+            session: Session;
+            token: CustomToken;
+        }) {
             if (session.user) {
-                session.user.id = token.id;
-                session.customToken = token.customToken;
+                session.user.id = token.id || "";
+                session.user.customToken = token.customToken;
             }
             return session;
         },
     },
     pages: {
         signIn: "/signin",
-        // error: '/auth/error',
     },
-    secret: "mysecret",
+    secret: process.env.NEXTAUTH_SECRET!,
     session: { strategy: "jwt" },
 };
