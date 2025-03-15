@@ -47,7 +47,7 @@ export const NEXT_AUTH: AuthOptions = {
         }),
     ],
     callbacks: {
-        async signIn({ user, account, profile }) {
+        async signIn({ user, account }) {
             try {
                 const customUser = await customUserAdapter(user, account);
                 // Store custom data in user object for later use in other callbacks
@@ -59,7 +59,7 @@ export const NEXT_AUTH: AuthOptions = {
                 return false;
             }
         },
-        async redirect({ url, baseUrl }) {
+        async redirect({ baseUrl }) {
             return baseUrl; // Redirects to home page after sign-in
         },
         async jwt({ token, user }) {
