@@ -17,6 +17,7 @@ export async function middleware(req: NextRequest) {
             secure: true,
             path: "/",
             maxAge: 60 * 60 * 24,
+            domain: ".ritweek.site",
             sameSite: "none",
         });
     } else {
