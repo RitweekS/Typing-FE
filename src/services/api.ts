@@ -2,7 +2,7 @@ import axios from "axios";
 import { BestStats, Leaderboard, Stats, TypingTestBody } from "./type";
 
 const AxiosInstance = axios.create({
-    baseURL: process.env.API_BASE_URL,
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     withCredentials: true,
 });
 
