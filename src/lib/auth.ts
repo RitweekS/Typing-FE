@@ -29,7 +29,7 @@ async function customUserAdapter(
 ): Promise<CustomUser> {
     try {
         const response = await fetch(
-            `${process.env.API_BASE_URL}/auth/verify`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/verify`,
             {
                 method: "POST",
                 headers: {
