@@ -13,18 +13,18 @@ const Leaderboard = () => {
         ) {
             return [
                 {
-                    name: getLeaderboardQuery.data.data[0].user.name,
+                    name: getLeaderboardQuery.data.data[0]?.user.name,
                     value: getLeaderboardQuery.data.data[0].score,
                     icon: "/first.svg",
                 },
                 {
-                    name: getLeaderboardQuery.data.data[1].user.name,
-                    value: getLeaderboardQuery.data.data[1].score,
+                    name: getLeaderboardQuery.data.data[1]?.user.name,
+                    value: getLeaderboardQuery.data.data[1]?.score,
                     icon: "/second.svg",
                 },
                 {
-                    name: getLeaderboardQuery.data.data[2].user.name,
-                    value: getLeaderboardQuery.data.data[2].score,
+                    name: getLeaderboardQuery.data.data[2]?.user.name,
+                    value: getLeaderboardQuery.data.data[2]?.score,
                     icon: "/third.svg",
                 },
             ];
