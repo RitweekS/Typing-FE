@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
             secure: true,
             path: "/",
             maxAge: 60 * 60 * 24,
-            sameSite: "strict",
+            sameSite: "none",
         });
     } else {
         res.cookies.delete("next-auth-session");
