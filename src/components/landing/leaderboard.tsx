@@ -7,7 +7,10 @@ import { useGetLeaderboard } from "@/services/queries";
 const Leaderboard = () => {
     const getLeaderboardQuery = useGetLeaderboard();
     const leaderboardList = useMemo(() => {
-        if (getLeaderboardQuery.data) {
+        if (
+            getLeaderboardQuery.data &&
+            getLeaderboardQuery.data.data.length > 0
+        ) {
             return [
                 {
                     name: getLeaderboardQuery.data.data[0].user.name,
